@@ -35,7 +35,7 @@
 #warning HAY QUE PONER EL NOMBRE (Y BORRAR EL WARNING)
 // elegir 1 o 2 autores y sustituir "Apellidos, Nombre" manteniendo el formato
 //char* autores="Autor: Apellidos, Nombre"; // un solo autor
-char* autores="Autor: Apellidos, Nombre\nAutor: Apellidos, Nombre" // dos autores
+char* autores="Autor: Apellidos, Nombre\nAutor: Apellidos, Nombre"; // dos autores
 
 // variable para indicar si mostrar información extra durante la ejecución
 // como la mayoría de las funciones necesitaran consultarla, la definimos global
@@ -300,7 +300,7 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 	while (!ultimoMensajeConfirmado) {
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
 		int recibido = recvfrom(socket, (char*)respuesta, sizeof(*respuesta), 0, servinfo->ai_addr, &(servinfo->ai_addrlen));
-		if (esMensajeValido(respuesta) && esLaRespuestaEsperada(mensaje, respuesta)) {
+		if (mensajeValido(respuesta) && esLaRespuestaEsperada(mensaje, respuesta)) {
 			if (ultimoMensaje) {
 				ultimoMensajeConfirmado = 1;
 			}

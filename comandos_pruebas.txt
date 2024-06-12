@@ -1,0 +1,6 @@
+
+dd if=/dev/urandom of=mificheroaleatorio bs=1000 count=20
+
+cat mificheroaleatorio | ./rcftpclient -v -a1 -d<servidor> -p32002
+
+cmp mificheroaleatorio f_recibido
