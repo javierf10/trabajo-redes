@@ -281,6 +281,7 @@ void process_requests(int s, unsigned int progflags, unsigned long ttrans, unsig
 
 		// recibir mensaje ****************************************************
 		recvsize=recibirmensaje(s,&recvbuffer,sizeof(recvbuffer),&remote,&remotelen);
+		printf("mensaje recibido");
 
 		if (recvsize>0) { // recepción correcta de mensaje
 
