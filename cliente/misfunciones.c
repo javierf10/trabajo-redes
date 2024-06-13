@@ -299,7 +299,11 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 
 	while (!ultimoMensajeConfirmado) {
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
+        if (enviado == -1) {
+            perror("Error al enviar mensaje");}
 		int recibido = recvfrom(socket, (char*)respuesta, sizeof(*respuesta), 0, servinfo->ai_addr, &(servinfo->ai_addrlen));
+        if (recibido == -1) {
+            perror("Error al recibir mensaje");}
 		if (mensajeValido(respuesta) && esLaRespuestaEsperada(mensaje, respuesta)) {
 			if (ultimoMensaje) {
 				ultimoMensajeConfirmado = 1;
@@ -313,8 +317,6 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 			}
 		}
 	}
-	return
-	printf("Algoritmo no implementado\n");
 }
 
 /**************************************************************************/
