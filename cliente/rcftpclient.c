@@ -155,6 +155,7 @@ int readtobuffer(char * buffer, int maxlen) {
 		numbytesleidos+=len;
 	}
 
+	printf("volviendo de readtobuffer"); //debug
 	return len;
 }
 
