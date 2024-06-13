@@ -2,7 +2,7 @@
 Cliente
 
 
-dd if=/dev/urandom of=mificheroaleatorio bs=1000 count=20
+dd if=/dev/urandom of=mificheroaleatorio bs=1000 count=1
 
 cat mificheroaleatorio | ./rcftpclient -v -a1 -dlocalhost -p32002
 

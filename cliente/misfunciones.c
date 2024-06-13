@@ -276,6 +276,7 @@ void construirMensajeRCFTP(struct rcftp_msg* mensaje, ssize_t numseq, ssize_t da
 	mensaje->next = htonl(0);
 	mensaje->sum = 0;
 	mensaje->sum = xsum((char*)mensaje,sizeof(*mensaje));
+    printf("mensaje construido"); //debug
 }
 /**************************************************************************/
 /*  algoritmo 1 (basico)  */
@@ -298,12 +299,14 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 	construirMensajeRCFTP(mensaje, htonl(0), datos, ultimoMensaje);
 
 	while (!ultimoMensajeConfirmado) {
+        printf("entra en el while") //debug
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
         if (enviado == -1) {
+            printf("errror al enviar mensaje (printf)"); //debug
             perror("Error al enviar mensaje");}
 		int recibido = recvfrom(socket, (char*)respuesta, sizeof(*respuesta), 0, servinfo->ai_addr, &(servinfo->ai_addrlen));
         if (recibido == -1) {
-            perror("Error al recibir mensaje");}
+            perror("Error al recibir mensaje");} //debug
 		if (mensajeValido(respuesta) && esLaRespuestaEsperada(mensaje, respuesta)) {
 			if (ultimoMensaje) {
 				ultimoMensajeConfirmado = 1;
