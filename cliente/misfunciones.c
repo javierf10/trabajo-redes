@@ -294,6 +294,7 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 
 	if (datos <= 0) { // if (finDeFicheroAlcanzado) then
 		ultimoMensaje = 1;
+        printf("ultimo mensaje"); //debug
 	}
 
 	construirMensajeRCFTP(mensaje, htonl(0), datos, ultimoMensaje);

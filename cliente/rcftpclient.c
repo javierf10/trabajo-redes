@@ -135,6 +135,8 @@ int readtobuffer(char * buffer, int maxlen) {
 	// no le estamos pasando correctamente la dirección de un buffer de tamaño adecuado
 	
 	// verificamos la cantidad de datos leída
+
+	printf("%d", len); //debug
 	if (len<0 && errno!=EAGAIN) { // no mostramos mensaje en caso de descriptor no bloqueante
 		perror("Error: readtobuffer: error al leer de la entrada estándar: ");
 		exit(1);
