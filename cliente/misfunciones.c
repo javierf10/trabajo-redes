@@ -299,7 +299,7 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 	construirMensajeRCFTP(mensaje, htonl(0), datos, ultimoMensaje);
 
 	while (!ultimoMensajeConfirmado) {
-        printf("entra en el while") //debug
+        printf("entra en el while"); //debug
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
         if (enviado == -1) {
             printf("errror al enviar mensaje (printf)"); //debug
