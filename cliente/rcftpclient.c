@@ -150,7 +150,8 @@ int readtobuffer(char * buffer, int maxlen) {
 			printf("readtobuffer: leídos %zd bytes de la entrada estándar (fin de fichero alcanzado o teclado en entrada estándar)\n",len);
 		}
 	}
-
+	
+	printf("que esta pasando aqui"); //debug
 	if (len>0) { // para el caso normal, anotamos los bytes leídos
 		numbytesleidos+=len;
 	}
