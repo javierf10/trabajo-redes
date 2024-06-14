@@ -315,8 +315,9 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
         printf("entra en el while "); //debug
         printf("y este nuevo en el bucle2?\n"); //debug
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
+        printf("sendto: final");
         if (enviado == -1) {
-            printf("errror al enviar mensaje (printf)"); //debug
+            printf("error al enviar mensaje (printf)"); //debug
             perror("Error al enviar mensaje");}
 		int recibido = recvfrom(socket, (char*)respuesta, sizeof(*respuesta), 0, servinfo->ai_addr, &(servinfo->ai_addrlen));
         if (recibido == -1) {
