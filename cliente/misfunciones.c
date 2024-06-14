@@ -330,6 +330,7 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 			}
 		}
 	}
+    printf("por que no probar supongo\n"); //debug
 }
 
 /**************************************************************************/
