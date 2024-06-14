@@ -292,28 +292,28 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 	int ultimoMensajeConfirmado = 0;
 
 	printf("Comunicación con algoritmo básico\n");
-    printf("Antes de readtobuffer\n"); //debug
+    //printf("Antes de readtobuffer\n"); //debug
 	int datos = readtobuffer((char*)mensaje->buffer, RCFTP_BUFLEN);
-    printf("Despues de readtobuffer\n"); //debug
+    //printf("Despues de readtobuffer\n"); //debug
 
 	if (datos <= 0) { // if (finDeFicheroAlcanzado) then
 		ultimoMensaje = 1;
         printf("es el ultimo mensaje\n"); //debug
 	}
 
-    printf("Antes de construir mensaje\n"); //debug
+    //printf("Antes de construir mensaje\n"); //debug
 	construirMensajeRCFTP(mensaje, htonl(0), datos, ultimoMensaje);
-    printf("Despues de construir mensaje\n"); //debug
+    //printf("Despues de construir mensaje\n"); //debug
     //printf("este lo saca o no\n"); //debug
     //printf("y este?\n"); //debug
     //fflush(stdout);
     //printf("y este otro\n"); //debug
-    printf("ultimo mensaje confirmado vale: %d ", ultimoMensajeConfirmado); //debug
-    printf("y este??\n"); //debug
+    //printf("ultimo mensaje confirmado vale: %d ", ultimoMensajeConfirmado); //debug
+    //printf("y este??\n"); //debug
 	while (!ultimoMensajeConfirmado) {
-        printf("y este nuevo en el bucle?\n"); //debug
+        //printf("y este nuevo en el bucle?\n"); //debug
         printf("entra en el while "); //debug
-        printf("y este nuevo en el bucle2?\n"); //debug
+        //printf("y este nuevo en el bucle2?\n"); //debug
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
         printf("sendto: final");
         if (enviado == -1) {
