@@ -285,6 +285,8 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 
 	struct rcftp_msg* mensaje = malloc(sizeof(struct rcftp_msg));
 	struct rcftp_msg* respuesta = malloc(sizeof(struct rcftp_msg));
+    memset(mensaje, 0, sizeof(struct rcftp_msg));
+    memset(respuesta, 0, sizeof(struct rcftp_msg));
 
 	int ultimoMensaje = 0;
 	int ultimoMensajeConfirmado = 0;
