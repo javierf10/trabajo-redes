@@ -313,6 +313,7 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 	while (!ultimoMensajeConfirmado) {
         printf("y este nuevo en el bucle?\n"); //debug
         printf("entra en el while "); //debug
+        printf("y este nuevo en el bucle2?\n"); //debug
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
         if (enviado == -1) {
             printf("errror al enviar mensaje (printf)"); //debug
