@@ -302,7 +302,7 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
     printf("Antes de construir mensaje\n"); //debug
 	construirMensajeRCFTP(mensaje, htonl(0), datos, ultimoMensaje);
     printf("Despues de construir mensaje\n"); //debug
-
+    fflush(stdout);
     printf("ultimo mensaje confirmado vale: %d ", ultimoMensajeConfirmado); //debug
 	while (!ultimoMensajeConfirmado) {
         printf("entra en el while "); //debug
