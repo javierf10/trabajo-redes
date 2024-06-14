@@ -299,8 +299,9 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
         printf("es el ultimo mensaje\n"); //debug
 	}
 
+    printf("Antes de construir mensaje\n"); //debug
 	construirMensajeRCFTP(mensaje, htonl(0), datos, ultimoMensaje);
-
+    printf("Despues de construir mensaje\n"); //debug
 
     printf("ultimo mensaje confirmado vale: %d", ultimoMensajeConfirmado); //debug
 	while (!ultimoMensajeConfirmado) {
