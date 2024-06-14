@@ -290,17 +290,19 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 	int ultimoMensajeConfirmado = 0;
 
 	printf("Comunicación con algoritmo básico\n");
+    printf("Antes de readtobuffer\n"); //debug
 	int datos = readtobuffer((char*)mensaje->buffer, RCFTP_BUFLEN);
+    printf("Despues de readtobuffer\n"); //debug
 
 	if (datos <= 0) { // if (finDeFicheroAlcanzado) then
 		ultimoMensaje = 1;
-        printf("ultimo mensaje"); //debug
+        printf("es el ultimo mensaje\n"); //debug
 	}
 
 	construirMensajeRCFTP(mensaje, htonl(0), datos, ultimoMensaje);
 
 
-    printf("ultimo mensaje confirmado: %d", ultimoMensajeConfirmado); //debug
+    printf("ultimo mensaje confirmado vale: %d", ultimoMensajeConfirmado); //debug
 	while (!ultimoMensajeConfirmado) {
         printf("entra en el while"); //debug
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
