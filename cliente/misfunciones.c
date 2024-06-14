@@ -307,6 +307,7 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
     fflush(stdout);
     printf("y este otro\n"); //debug
     printf("ultimo mensaje confirmado vale: %d ", ultimoMensajeConfirmado); //debug
+    printf("y este??\n"); //debug
 	while (!ultimoMensajeConfirmado) {
         printf("entra en el while "); //debug
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
