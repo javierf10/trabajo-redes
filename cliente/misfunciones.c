@@ -304,13 +304,14 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
     printf("Antes de construir mensaje\n"); //debug
 	construirMensajeRCFTP(mensaje, htonl(0), datos, ultimoMensaje);
     printf("Despues de construir mensaje\n"); //debug
-    printf("este lo saca o no\n"); //debug
-    printf("y este?\n"); //debug
-    fflush(stdout);
-    printf("y este otro\n"); //debug
+    //printf("este lo saca o no\n"); //debug
+    //printf("y este?\n"); //debug
+    //fflush(stdout);
+    //printf("y este otro\n"); //debug
     printf("ultimo mensaje confirmado vale: %d ", ultimoMensajeConfirmado); //debug
     printf("y este??\n"); //debug
 	while (!ultimoMensajeConfirmado) {
+        printf("y este nuevo en el bucle?\n"); //debug
         printf("entra en el while "); //debug
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
         if (enviado == -1) {
