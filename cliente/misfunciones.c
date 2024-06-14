@@ -320,6 +320,7 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 		int recibido = recvfrom(socket, (char*)respuesta, sizeof(*respuesta), 0, servinfo->ai_addr, &(servinfo->ai_addrlen));
         if (recibido == -1) {
             perror("Error al recibir mensaje");} //debug
+        printf("y este nuevo mas abajo en el bucle?\n"); //debug
 		if (mensajeValido(respuesta) && esLaRespuestaEsperada(mensaje, respuesta)) {
 			if (ultimoMensaje) {
 				ultimoMensajeConfirmado = 1;
