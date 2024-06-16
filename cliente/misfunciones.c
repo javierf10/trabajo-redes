@@ -302,7 +302,7 @@ void construirMensajeRCFTP(struct rcftp_msg* mensaje, ssize_t numseq, ssize_t da
 	// 	return 1;
 	// else
 	// 	return 0;
-}
+
 
 }
 /**************************************************************************/
