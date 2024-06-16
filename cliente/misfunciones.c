@@ -411,11 +411,15 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
         /*** BLOQUE DE ENVIO: Enviar datos si hay espacio en ventana ***/
 
         if ((getfreespace() >= RCFTP_BUFLEN) && !ultimoMensaje) { //if espacioLibreEnVentanaEmision and finDeFicheroNoAlcanzado then
+           
+           	for(i = 0; i < RCFTP_BUFLEN; i++){ //borrar buffer
+		        mensaje->buffer[i] = 0;
+	        }
             longitud = readtobuffer((char*)mensaje->buffer, RCFTP_BUFLEN); //datos ← leerDeEntradaEstandar()
             printf("Longitud leida: %d \n", longitud); //debug
             if (longitud < RCFTP_BUFLEN) {
                 ultimoMensaje = 1; // Marca que este es el último mensaje
-                printf("                     ultimoMensaje = %d", ultimoMensaje); //debug
+                printf("\n                     ultimoMensaje = %d\n", ultimoMensaje); //debug
             }
 
             construirMensajeRCFTP(mensaje, numeroSecuencia, longitud, ultimoMensaje); //mensaje ← construirMensajeRCFTP(datos)
