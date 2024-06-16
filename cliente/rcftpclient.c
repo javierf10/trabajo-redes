@@ -136,7 +136,7 @@ int readtobuffer(char * buffer, int maxlen) {
 	
 	// verificamos la cantidad de datos leída
 
-	printf("readtobuffer: longitud %d", len); //debug
+	//printf("readtobuffer: longitud %d", len); //debug
 	if (len<0 && errno!=EAGAIN) { // no mostramos mensaje en caso de descriptor no bloqueante
 		perror("Error: readtobuffer: error al leer de la entrada estándar: ");
 		exit(1);
@@ -149,16 +149,16 @@ int readtobuffer(char * buffer, int maxlen) {
 		} else if (len>0) {
 			printf("readtobuffer: leídos %zd bytes de la entrada estándar (fin de fichero alcanzado o teclado en entrada estándar)\n",len);
 		}
-		fflush(stdout);
-		printf("que esta pasando aqui 1"); //debug
+		//fflush(stdout);
+		//printf("que esta pasando aqui 1"); //debug
 	}
-	fflush(stdout);
-	printf("que esta pasando aqui 2"); //debug
+	//fflush(stdout);
+	//printf("que esta pasando aqui 2"); //debug
 	if (len>0) { // para el caso normal, anotamos los bytes leídos
 		numbytesleidos+=len;
 	}
 
-	printf("volviendo de readtobuffer"); //debug
+	//printf("volviendo de readtobuffer"); //debug
 	return len;
 }
 

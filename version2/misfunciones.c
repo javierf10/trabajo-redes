@@ -377,8 +377,6 @@ void alg_stopwait(int socket, struct addrinfo *servinfo) {
     printf("Comunicación con algoritmo stop&wait\n");
 }
 
-
-
 /**************************************************************************/
 /*  algoritmo 3 (ventana deslizante)  */
 /**************************************************************************/

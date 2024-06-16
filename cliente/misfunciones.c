@@ -28,6 +28,7 @@
 #include "multialarm.h" // Gestión de timeouts
 #include "vemision.h" // Gestión de ventana de emisión
 #include "misfunciones.h"
+//#include <signal.h>
 
 /**************************************************************************/
 /* VARIABLES GLOBALES                                                     */
@@ -298,31 +299,24 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 
 	if (datos <= 0) { // if (finDeFicheroAlcanzado) then
 		ultimoMensaje = 1;
-        printf("es el ultimo mensaje\n"); //debug
+        //printf("es el ultimo mensaje\n"); //debug
 	}
 
-    //printf("Antes de construir mensaje\n"); //debug
 	construirMensajeRCFTP(mensaje, htonl(0), datos, ultimoMensaje);
-    //printf("Despues de construir mensaje\n"); //debug
-    //printf("este lo saca o no\n"); //debug
-    //printf("y este?\n"); //debug
-    //fflush(stdout);
-    //printf("y este otro\n"); //debug
-    //printf("ultimo mensaje confirmado vale: %d ", ultimoMensajeConfirmado); //debug
-    //printf("y este??\n"); //debug
+    
 	while (!ultimoMensajeConfirmado) {
         //printf("y este nuevo en el bucle?\n"); //debug
-        printf("entra en el while "); //debug
+        //printf("entra en el while "); //debug
         //printf("y este nuevo en el bucle2?\n"); //debug
 		int enviado = sendto(socket, (char*)mensaje, sizeof(*mensaje), 0, servinfo->ai_addr,servinfo->ai_addrlen);
         printf("sendto: final");
         if (enviado == -1) {
-            printf("error al enviar mensaje (printf)"); //debug
-            perror("Error al enviar mensaje");}
+            //printf("error al enviar mensaje (printf)"); //debug
+            printf("Error al enviar mensaje");}
 		int recibido = recvfrom(socket, (char*)respuesta, sizeof(*respuesta), 0, servinfo->ai_addr, &(servinfo->ai_addrlen));
         if (recibido == -1) {
-            perror("Error al recibir mensaje");} //debug
-        printf("y este nuevo mas abajo en el bucle?\n"); //debug
+            printf("Error al recibir mensaje");} //debug
+        //printf("y este nuevo mas abajo en el bucle?\n"); //debug
 		if (mensajeValido(respuesta) && esLaRespuestaEsperada(mensaje, respuesta)) {
 			if (ultimoMensaje) {
 				ultimoMensajeConfirmado = 1;
@@ -357,8 +351,51 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
 
 	printf("Comunicación con algoritmo go-back-n\n");
 
-#warning FALTA IMPLEMENTAR EL ALGORITMO GO-BACK-N
-	printf("Algoritmo no implementado\n");
+    struct rcftp_msg* mensaje = malloc(sizeof(struct rcftp_msg));
+	struct rcftp_msg* respuesta = malloc(sizeof(struct rcftp_msg));
+    struct rcftp_msg* mensajeAnterior = malloc(sizeof(struct rcftp_msg));
+    memset(mensaje, 0, sizeof(struct rcftp_msg));
+    memset(respuesta, 0, sizeof(struct rcftp_msg));
+    memset(mensajeAnterior, 0, sizeof(struct rcftp_msg));
+
+    signal(SIGALRM,handle_sigalrm);
+
+
+// while ultimoMensajeConfirmado = false do
+
+//      /*** BLOQUE DE ENVIO: Enviar datos si hay espacio en ventana ***/
+//      if espacioLibreEnVentanaEmision and finDeFicheroNoAlcanzado then
+//          datos ← leerDeEntradaEstandar()
+//          mensaje ← construirMensajeRCFTP(datos)
+//          enviar(mensaje)
+//          addtimeout()
+//          a˜nadirDatosAVentanaEmision(datos)
+//      end if
+
+//      /*** BLOQUE DE RECEPCION: Recibir respuesta y procesarla (si existe) ***/
+//      numDatosRecibidos ← recibir(respuesta) /*** No bloqueante: devuelve -1 si no hay datos ***/
+//      if numDatosRecibidos > 0 then
+//          if esMensajeValido(respuesta) and esRespuestaEsperadaGBN(respuesta) then
+//              canceltimeout()
+//              liberarVentanaEmisionHasta(respuesta.next)
+//              if esConfirmacionDeUltimosDatos(respuesta) then
+//                  ultimoMensajeConfirmado ← true
+//              end if
+//          end if
+//      end if
+
+//      /*** BLOQUE DE PROCESADO DE TIMEOUT ***/
+//      if timeouts procesados ̸= timeouts vencidos then
+//          mensaje ← construirMensajeMasViejoDeVentanaEmision()
+//          enviar(mensaje)
+//          addtimeout()
+//          timeouts procesados ← timeouts procesados+1
+//      end if
+// end while
+
+// /*** La funcion esRespuestaEsperadaGBN() debe comprobar que respuesta.next−1 este dentro de la
+// ventana de emision y que no haya flags de ((ocupado/abortar)) en respuesta ***/
+
 }
 
 
