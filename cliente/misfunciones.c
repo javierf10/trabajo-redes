@@ -294,6 +294,9 @@ void construirMensajeRCFTP(struct rcftp_msg* mensaje, ssize_t numseq, ssize_t da
 	mensaje->next = htonl(0);
 	mensaje->sum = 0;
 	mensaje->sum = xsum((char*)mensaje,sizeof(*mensaje));
+    printf("Valor sizeof(*mensaje): %d\n", sizeof(*mensaje));
+    printf("Valor checksum: %d\n", mensaje->sum);
+
 }
 /**************************************************************************/
 /*  algoritmo 1 (basico)  */
