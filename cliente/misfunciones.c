@@ -28,7 +28,7 @@
 #include "multialarm.h" // Gestión de timeouts
 #include "vemision.h" // Gestión de ventana de emisión
 #include "misfunciones.h"
-//#include <signal.h>
+#include <signal.h>
 
 /**************************************************************************/
 /* VARIABLES GLOBALES                                                     */
