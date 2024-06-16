@@ -246,6 +246,7 @@ int esLaRespuestaEsperada(struct rcftp_msg* mensaje, struct rcftp_msg* respuesta
 	}
 	return 1;
 }
+
 /**************************************************************************/
 /* Comprueba la versión y el checksum del mensaje */
 /**************************************************************************/
@@ -257,6 +258,22 @@ int mensajeValido(struct rcftp_msg* respuesta) {
 		return 0;
 	}
 	return 1;
+}
+
+/**************************************************************************/
+/* Comprueba que respuesta.next−1 este dentro de la ventana de emision y
+   que no haya flags de ((ocupado/abortar)) en respuesta */
+/**************************************************************************/
+int esRespuestaEsperadaGBN(struct rcftp_msg* respuesta, int numeroSecuenciaSiguiente, int numeroSecuencia) {
+    if ((ntohl(respuesta->next) <= numeroSecuenciaSiguiente) || (ntohl(recvbuffer.next) > numeroSecuencia)){
+        fprintf(stderr,"Error, el mensaje recibido tiene el campo next incorrecto\n");
+        return 0;
+    }
+    if(respuesta->flags == F_ABORT || respuesta->flags == F_BUSY) {
+        fprintf(stderr,"Error, el mensaje recibido tiene un flag incorrecto\n");
+        return 0;
+    }
+    return 1;
 }
 
 /**************************************************************************/
@@ -401,7 +418,7 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
         /*** No bloqueante: devuelve -1 si no hay datos ***/
         numeroDatosRecibidos = recvfrom(socket, respuesta, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, &(servinfo->ai_addrlen));//numDatosRecibidos ← recibir(respuesta) 
         if (numeroDatosRecibidos > 0) { //if numDatosRecibidos > 0 then
-            if (esMensajeValidoYesLaRespuestaEsperada(respuesta, numeroSecuenciaSiguiente, numeroSecuencia)) {//if esMensajeValido(respuesta) and esRespuestaEsperadaGBN(respuesta) then
+            if (mensajeValido(respuesta) && esRespuestaEsperadaGBN(respuesta, numeroSecuenciaSiguiente, numeroSecuencia)) {//if esMensajeValido(respuesta) and esRespuestaEsperadaGBN(respuesta) then
                 canceltimeout(); //canceltimeout()
                 freewindow(ntohl(respuesta->next)); //liberarVentanaEmisionHasta(respuesta.next)
                 numeroSecuenciaSiguiente = ntohl(respuesta->next);
@@ -431,7 +448,6 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
 
 
 
-} /*** La funcion esRespuestaEsperadaGBN() debe comprobar que respuesta.next−1 este dentro de la
- ventana de emision y que no haya flags de ((ocupado/abortar)) en respuesta ***/
+} 
 
 
