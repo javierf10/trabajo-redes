@@ -303,7 +303,7 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 	}
 
 	construirMensajeRCFTP(mensaje, htonl(0), datos, ultimoMensaje);
-    
+
 	while (!ultimoMensajeConfirmado) {
         //printf("y este nuevo en el bucle?\n"); //debug
         //printf("entra en el while "); //debug
@@ -330,7 +330,6 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 			}
 		}
 	}
-    printf("por que no probar supongo\n"); //debug
 }
 
 /**************************************************************************/
@@ -358,44 +357,81 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
     memset(respuesta, 0, sizeof(struct rcftp_msg));
     memset(mensajeAnterior, 0, sizeof(struct rcftp_msg));
 
+    //int datos;
+
+    int numeroSecuencia = 0;
+    int numeroSecuenciaAnterior;
+    int longitudAnterior = RCFTP_BUFLEN;
+    int numeroSecuenciaSiguiente = 0; //debug nextAnt
+
+  	int ultimoMensaje = 0;
+  	int ultimoMensajeConfirmado = 0;
+    volatile int timeoutsProcesados = 0;
+
+  	int longitud;
+    int numeroDatosRecibidos;
+    setwindowsize(window);
+
+    int socketFlags;
+    socketFlags = fcntl(socket, F_GETFL, 0);
+    fcntl(socket, F_SETFL, sockflags | O_NONBLOCK); // Modifica los flags para que el socket no bloquee
+
     signal(SIGALRM,handle_sigalrm);
 
+    // while ultimoMensajeConfirmado = false do
+    while (!ultimoMensajeConfirmado) {
 
-// while ultimoMensajeConfirmado = false do
+        /*** BLOQUE DE ENVIO: Enviar datos si hay espacio en ventana ***/
 
-//      /*** BLOQUE DE ENVIO: Enviar datos si hay espacio en ventana ***/
-//      if espacioLibreEnVentanaEmision and finDeFicheroNoAlcanzado then
-//          datos ← leerDeEntradaEstandar()
-//          mensaje ← construirMensajeRCFTP(datos)
-//          enviar(mensaje)
-//          addtimeout()
-//          a˜nadirDatosAVentanaEmision(datos)
-//      end if
+        if ((getfreespace() >= RCFTP_BUFLEN) && !ultimoMensaje) { //if espacioLibreEnVentanaEmision and finDeFicheroNoAlcanzado then
+            longitud = readtobuffer((char*)mensaje->buffer, RCFTP_BUFLEN); //datos ← leerDeEntradaEstandar()
+            if (longitud < RCFTP_BUFLEN) {
+                ultimoMensaje = 1; // Marca que este es el último mensaje
+            }
 
-//      /*** BLOQUE DE RECEPCION: Recibir respuesta y procesarla (si existe) ***/
-//      numDatosRecibidos ← recibir(respuesta) /*** No bloqueante: devuelve -1 si no hay datos ***/
-//      if numDatosRecibidos > 0 then
-//          if esMensajeValido(respuesta) and esRespuestaEsperadaGBN(respuesta) then
-//              canceltimeout()
-//              liberarVentanaEmisionHasta(respuesta.next)
-//              if esConfirmacionDeUltimosDatos(respuesta) then
-//                  ultimoMensajeConfirmado ← true
-//              end if
-//          end if
-//      end if
+            construirMensajeRCFTP(mensaje, numeroSecuencia, longitud, ultimoMensaje); //mensaje ← construirMensajeRCFTP(datos)
+            numeroSecuencia += longitud;
+            sendto(socket, (char*)mensaje, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, servinfo->ai_addrlen); // enviar(mensaje)
+            addtimeout(); //addtimeout()
+            addsentdatatowindow((char*)mensaje->buffer, longitud);//añadirDatosAVentanaEmision(datos)
+        }  
 
-//      /*** BLOQUE DE PROCESADO DE TIMEOUT ***/
-//      if timeouts procesados ̸= timeouts vencidos then
-//          mensaje ← construirMensajeMasViejoDeVentanaEmision()
-//          enviar(mensaje)
-//          addtimeout()
-//          timeouts procesados ← timeouts procesados+1
-//      end if
-// end while
+        /*** BLOQUE DE RECEPCION: Recibir respuesta y procesarla (si existe) ***/
 
-// /*** La funcion esRespuestaEsperadaGBN() debe comprobar que respuesta.next−1 este dentro de la
-// ventana de emision y que no haya flags de ((ocupado/abortar)) en respuesta ***/
+        /*** No bloqueante: devuelve -1 si no hay datos ***/
+        numeroDatosRecibidos = recvfrom(socket, respuesta, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, &(servinfo->ai_addrlen));//numDatosRecibidos ← recibir(respuesta) 
+        if (numeroDatosRecibidos > 0) { //if numDatosRecibidos > 0 then
+            if (esMensajeValidoYesLaRespuestaEsperada(respuesta, numeroSecuenciaSiguiente, numeroSecuencia)) {//if esMensajeValido(respuesta) and esRespuestaEsperadaGBN(respuesta) then
+                canceltimeout(); //canceltimeout()
+                freewindow(ntohl(respuesta->next)); //liberarVentanaEmisionHasta(respuesta.next)
+                numeroSecuenciaSiguiente = ntohl(respuesta->next);
+                if (ultimoMensaje && (respuesta->flags == F_FIN)) {//if esConfirmacionDeUltimosDatos(respuesta) then
+                    ultimoMensajeConfirmado = 1; //ultimoMensajeConfirmado ← true
+                }
+            }
+        }
+    
+        /*** BLOQUE DE PROCESADO DE TIMEOUT ***/
 
-}
+        if (timeoutsProcesados != timeouts_vencidos) {//if timeouts procesados ̸= timeouts vencidos then
+            longitudAnterior = RCFTP_BUFLEN;
+            numeroSecuenciaAnterior = getdatatoresend((char*)mensaje->buffer, &longitudAnterior);
+            construirMensajeRCFTP(mensajeAnterior, numeroSecuenciaAnterior, longitudAnterior, ultimoMensaje); //mensaje ← construirMensajeMasViejoDeVentanaEmision()
+            if (longitudAnterior < RCFTP_BUFLEN && ultimoMensaje) {
+                mensajeAnterior->flags = F_FIN;
+                mensajeAnterior->sum = xsum((char*)mensajeAnterior, sizeof(struct rcftp_msg));
+            }
+            sendto(socket, (char *)mensajeAnterior, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, servinfo->ai_addrlen); //enviar(mensaje)
+            addtimeout(); //addtimeout()
+            timeoutsProcesados++; //timeouts procesados ← timeouts procesados+1          
+        }
+
+
+    }
+
+
+
+} /*** La funcion esRespuestaEsperadaGBN() debe comprobar que respuesta.next−1 este dentro de la
+ ventana de emision y que no haya flags de ((ocupado/abortar)) en respuesta ***/
 
 
