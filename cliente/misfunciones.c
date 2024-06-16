@@ -405,7 +405,7 @@ void alg_stopwait(int socket, struct addrinfo *servinfo) {
             }
             if (timeouts_procesados != timeouts_vencidos) { // Comparar con otra variable inicializada a 0; si son distintas, tratar un timeout e incrementar en uno
                 esperar = 0;
-                timeouts_procesados = timeouts_procesados + 1;
+                timeouts_procesados++;
             }
     }
     if (numDatosRecibidos != -1){
@@ -414,12 +414,12 @@ void alg_stopwait(int socket, struct addrinfo *servinfo) {
                 ultimoMensajeConfirmado = 1;
             }
             else {
-                numeroSecuencia = numeroSecuencia + ntohs(mensaje->len);
+                numeroSecuencia += ntohs(mensaje->len);
                 longitud = readtobuffer((char*)mensaje->buffer, RCFTP_BUFLEN);
                 if (longitud < RCFTP_BUFLEN) {
                     ultimoMensaje = 1;
                 }
-                construirMensajeRCFTP(mensaje, numeroSecuencia, longitud, ultimoMensaje);
+                construirMensajeRCFTP(mensaje, htonl(numeroSecuencia), longitud, ultimoMensaje);
                 }
             }
         }
