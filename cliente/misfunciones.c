@@ -294,11 +294,13 @@ void construirMensajeRCFTP(struct rcftp_msg* mensaje, int numseq, int datos, int
 
 	mensaje->next = htonl(0);
 	mensaje->sum = 0;
-	mensaje->sum = xsum((char*)mensaje,sizeof(*mensaje));
+	//mensaje->sum = xsum((char*)mensaje,sizeof(*mensaje));
+    mensaje->sum = xsum((char*)mensaje,sizeof(*mensaje));
     printf("Valor (sizeof(struct rcftp_msg): %d\n", sizeof(struct rcftp_msg));
     printf("Valor sizeof(*mensaje): %d\n", sizeof(*mensaje));
     printf("Valor checksum(construir): %d\n", mensaje->sum);
     printf("Valor int issumvalid(struct rcftp_msg *mensaje,int len 488): %d\n", issumvalid(mensaje, 488));
+    printf("Valor int issumvalid((char*)mensaje, sizeof(*mensaje)): %d\n", issumvalid((char*)mensaje, sizeof(*mensaje)));
     // int issumvalid(struct rcftp_msg *mensaje,int len) {
 	// if (xsum((char*)mensaje,len)==0)
 	// 	return 1;
