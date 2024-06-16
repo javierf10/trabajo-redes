@@ -447,6 +447,9 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
             if (longitudAnterior < RCFTP_BUFLEN && ultimoMensaje) {
                 mensajeAnterior->flags = F_FIN;
                 mensajeAnterior->sum = xsum((char*)mensajeAnterior, sizeof(*mensajeAnterior));
+                printf("Se hace el checksum fuera de la funcion\n"); //debug
+                printf("Valor checksum: %d\n", mensaje->sum);
+
             }
             sendto(socket, (char *)mensajeAnterior, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, servinfo->ai_addrlen); //enviar(mensaje)
             addtimeout(); //addtimeout()
