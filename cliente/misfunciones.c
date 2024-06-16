@@ -296,7 +296,8 @@ void construirMensajeRCFTP(struct rcftp_msg* mensaje, ssize_t numseq, ssize_t da
 	mensaje->sum = xsum((char*)mensaje,sizeof(*mensaje));
     printf("Valor (sizeof(struct rcftp_msg): %d\n", sizeof(struct rcftp_msg));
     printf("Valor sizeof(*mensaje): %d\n", sizeof(*mensaje));
-    printf("Valor checksum: %d\n", mensaje->sum);
+    printf("Valor checksum(construir): %d\n", mensaje->sum);
+    printf("Valor int issumvalid(struct rcftp_msg *mensaje,int len 488): %d\n", issumvalid(mensaje, 488));
     // int issumvalid(struct rcftp_msg *mensaje,int len) {
 	// if (xsum((char*)mensaje,len)==0)
 	// 	return 1;
@@ -448,7 +449,7 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
                 mensajeAnterior->flags = F_FIN;
                 mensajeAnterior->sum = xsum((char*)mensajeAnterior, sizeof(*mensajeAnterior));
                 printf("Se hace el checksum fuera de la funcion\n"); //debug
-                printf("Valor checksum: %d\n", mensaje->sum);
+                printf("Valor checksum: %d\n", mensajeAnterior->sum);
 
             }
             sendto(socket, (char *)mensajeAnterior, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, servinfo->ai_addrlen); //enviar(mensaje)
