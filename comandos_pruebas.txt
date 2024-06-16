@@ -7,6 +7,9 @@ dd if=/dev/urandom of=mificheroaleatorio bs=1000 count=3
 //algoritmo 1
 cat mificheroaleatorio | ./rcftpclient -v -a1 -d155.210.154.204 -p32002
 
+//algoritmo 2
+cat mificheroaleatorio | ./rcftpclient -v -a2 -d155.210.154.204 -p32002
+
 //algoritmo 3
 cat mificheroaleatorio | ./rcftpclient -v -a3 -d155.210.154.204 -p32002
 
@@ -16,3 +19,4 @@ Servidor
 
 ./rcftpd -v -p32002
 
+cmp f_recibido ../cliente/mificheroaleatorio

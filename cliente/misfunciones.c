@@ -354,8 +354,8 @@ void alg_stopwait(int socket, struct addrinfo *servinfo) {
     fcntl(socket, F_SETFL, sockflags | O_NONBLOCK); // modifica el flag de bloqueo
     signal(SIGALRM,handle_sigalrm);
 
-    struct rcftp_msg* mensaje;
-	struct rcftp_msg* respuesta;
+    struct rcftp_msg* mensaje = malloc(sizeof(struct rcftp_msg));
+	struct rcftp_msg* respuesta = malloc(sizeof(struct rcftp_msg));
     memset(mensaje, 0, sizeof(struct rcftp_msg));
     memset(respuesta, 0, sizeof(struct rcftp_msg));
 	int numeroSecuencia = 0;
