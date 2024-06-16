@@ -294,7 +294,6 @@ void construirMensajeRCFTP(struct rcftp_msg* mensaje, ssize_t numseq, ssize_t da
 	mensaje->next = htonl(0);
 	mensaje->sum = 0;
 	mensaje->sum = xsum((char*)mensaje,sizeof(*mensaje));
-    printf("mensaje construido"); //debug
 }
 /**************************************************************************/
 /*  algoritmo 1 (basico)  */
@@ -402,6 +401,7 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
 
         if ((getfreespace() >= RCFTP_BUFLEN) && !ultimoMensaje) { //if espacioLibreEnVentanaEmision and finDeFicheroNoAlcanzado then
             longitud = readtobuffer((char*)mensaje->buffer, RCFTP_BUFLEN); //datos ← leerDeEntradaEstandar()
+            printf("Longitud leida: %d \n", longitud); //debug
             if (longitud < RCFTP_BUFLEN) {
                 ultimoMensaje = 1; // Marca que este es el último mensaje
             }
