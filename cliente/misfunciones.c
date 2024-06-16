@@ -33,10 +33,10 @@
 /**************************************************************************/
 /* VARIABLES GLOBALES                                                     */
 /**************************************************************************/
-#warning HAY QUE PONER EL NOMBRE (Y BORRAR EL WARNING)
+
 // elegir 1 o 2 autores y sustituir "Apellidos, Nombre" manteniendo el formato
 //char* autores="Autor: Apellidos, Nombre"; // un solo autor
-char* autores="Autor: Apellidos, Nombre\nAutor: Apellidos, Nombre"; // dos autores
+char* autores="Autor: Falcó Díez, Javier\nAutor: Alonso Martín, Jaime"; // dos autores
 
 // variable para indicar si mostrar información extra durante la ejecución
 // como la mayoría de las funciones necesitaran consultarla, la definimos global
@@ -365,10 +365,65 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 /**************************************************************************/
 void alg_stopwait(int socket, struct addrinfo *servinfo) {
 
-	printf("Comunicación con algoritmo stop&wait\n");
+    int sockflags;
+    sockflags = fcntl(socket, F_GETFL, 0); // obtiene el valor de los flags
+    fcntl(socket, F_SETFL, sockflags | O_NONBLOCK); // modifica el flag de bloqueo
+    signal(SIGALRM,handle_sigalrm);
 
-#warning FALTA IMPLEMENTAR EL ALGORITMO STOP-WAIT
-	printf("Algoritmo no implementado\n");
+    struct rcftp_msg* mensaje;
+	struct rcftp_msg* respuesta;
+    memset(mensaje, 0, sizeof(struct rcftp_msg));
+    memset(respuesta, 0, sizeof(struct rcftp_msg));
+	int numeroSecuencia = 0;
+
+  	int ultimoMensaje = 0;
+  	int ultimoMensajeConfirmado = 0;
+  	int longitud = readtobuffer((char*)mensaje->buffer, RCFTP_BUFLEN);
+
+    // int datos;
+
+  	if (longitud < RCFTP_BUFLEN) {
+        ultimoMensaje = 1; // Marca que este es el último mensaje
+    }
+
+    construirMensajeRCFTP(mensaje, numeroSecuencia, longitud, ultimoMensaje);
+    
+    int esperar;
+    int numDatosRecibidos;
+    volatile int timeouts_procesados = 0; // La variable puede ser modificada por la rutina de manejo de señales 
+    
+    while (ultimoMensajeConfirmado == 0) {
+        sendto(socket, (char*)mensaje, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, servinfo->ai_addrlen); // enviar(mensaje)
+        addtimeout();
+        esperar = 1;
+        while (esperar) {
+            numDatosRecibidos = recvfrom(socket,&respuesta,sizeof(respuesta),0,servinfo->ai_addr,&(servinfo->ai_addrlen)); //numDatosRecibidos ← recibir(respuesta)
+            if (numDatosRecibidos > 0) {
+                canceltimeout();
+                esperar = 0;
+            }
+            if (timeouts_procesados != timeouts_vencidos) { // Comparar con otra variable inicializada a 0; si son distintas, tratar un timeout e incrementar en uno
+                esperar = 0;
+                timeouts_procesados = timeouts_procesados + 1;
+            }   
+    }
+    if (numDatosRecibidos != -1){
+        if ((mensajeValido(respuesta)) && (esLaRespuestaEsperada(mensaje, respuesta))) {
+            if (ultimoMensaje) {
+                ultimoMensajeConfirmado = 1;
+            }
+            else {
+                numeroSecuencia = numeroSecuencia + ntohs(mensaje->len);
+                longitud = readtobuffer((char*)mensaje->buffer, RCFTP_BUFLEN);
+                if (longitud < RCFTP_BUFLEN) {
+                    ultimoMensaje = 1;
+                }
+                construirMensajeRCFTP(mensaje, numeroSecuencia, longitud, ultimoMensaje);
+                }
+            }
+        }
+    }
+    printf("Comunicación con algoritmo stop&wait\n");
 }
 
 /**************************************************************************/
@@ -471,5 +526,4 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
 
 
 } 
-
 
