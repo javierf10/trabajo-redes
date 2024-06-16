@@ -281,7 +281,7 @@ int esRespuestaEsperadaGBN(struct rcftp_msg* respuesta, int numeroSecuenciaSigui
 /**************************************************************************/
 void construirMensajeRCFTP(struct rcftp_msg* mensaje, int numseq, int datos, int ultimomensaje){
 	mensaje->version = RCFTP_VERSION_1;
-    printf("Numero secuencia(dentro): %d \n", numseq); //debug
+    printf("Numero secuencia(dentro): %d \n", mensaje->numseq); //debug
 	mensaje->numseq = numseq;
 	mensaje->len = htons(datos);
 
@@ -423,10 +423,10 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
                 printf("\n                     ultimoMensaje = %d\n", ultimoMensaje); //debug
             }
 
-            printf("Numero secuencia(antes): %d \n", numeroSecuencia); //debug
+            printf("Numero secuencia(antes): %d \n", mensaje->numseq); //debug
             construirMensajeRCFTP(mensaje, numeroSecuencia, longitud, ultimoMensaje); //mensaje ← construirMensajeRCFTP(datos)
             numeroSecuencia += longitud;
-            printf("Numero secuencia(despues): %d \n", numeroSecuencia); //debug
+            printf("Numero secuencia(despues): %d \n", mensaje->numseq); //debug
             sendto(socket, (char*)mensaje, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, servinfo->ai_addrlen); // enviar(mensaje)
             addtimeout(); //addtimeout()
             addsentdatatowindow((char*)mensaje->buffer, longitud);//añadirDatosAVentanaEmision(datos)
