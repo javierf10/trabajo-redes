@@ -265,7 +265,7 @@ int mensajeValido(struct rcftp_msg* respuesta) {
    que no haya flags de ((ocupado/abortar)) en respuesta */
 /**************************************************************************/
 int esRespuestaEsperadaGBN(struct rcftp_msg* respuesta, int numeroSecuenciaSiguiente, int numeroSecuencia) {
-    if ((ntohl(respuesta->next) <= numeroSecuenciaSiguiente) || (ntohl(recvbuffer.next) > numeroSecuencia)){
+    if ((ntohl(respuesta->next) <= numeroSecuenciaSiguiente) || (ntohl(respuesta->next) > numeroSecuencia)){
         fprintf(stderr,"Error, el mensaje recibido tiene el campo next incorrecto\n");
         return 0;
     }
