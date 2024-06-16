@@ -391,7 +391,7 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
 
     int socketFlags;
     socketFlags = fcntl(socket, F_GETFL, 0);
-    fcntl(socket, F_SETFL, sockflags | O_NONBLOCK); // Modifica los flags para que el socket no bloquee
+    fcntl(socket, F_SETFL, socketFlags | O_NONBLOCK);
 
     signal(SIGALRM,handle_sigalrm);
 
