@@ -412,7 +412,7 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
 
         if ((getfreespace() >= RCFTP_BUFLEN) && !ultimoMensaje) { //if espacioLibreEnVentanaEmision and finDeFicheroNoAlcanzado then
            
-           	for(int i = 0; i < RCFTP_BUFLEN; i++){ //borrar buffer
+           	for(int i = 0; i < RCFTP_BUFLEN; i++){ //vaciar buffer
 		        mensaje->buffer[i] = 0;
 	        }
             longitud = readtobuffer((char*)mensaje->buffer, RCFTP_BUFLEN); //datos ← leerDeEntradaEstandar()
@@ -422,8 +422,10 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
                 printf("\n                     ultimoMensaje = %d\n", ultimoMensaje); //debug
             }
 
+            printf("Numero secuencia(antes): %d \n", numeroSecuencia); //debug
             construirMensajeRCFTP(mensaje, numeroSecuencia, longitud, ultimoMensaje); //mensaje ← construirMensajeRCFTP(datos)
             numeroSecuencia += longitud;
+            printf("Numero secuencia(despues): %d \n", numeroSecuencia); //debug
             sendto(socket, (char*)mensaje, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, servinfo->ai_addrlen); // enviar(mensaje)
             addtimeout(); //addtimeout()
             addsentdatatowindow((char*)mensaje->buffer, longitud);//añadirDatosAVentanaEmision(datos)
