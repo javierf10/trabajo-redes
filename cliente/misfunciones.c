@@ -282,7 +282,8 @@ int esRespuestaEsperadaGBN(struct rcftp_msg* respuesta, int numeroSecuenciaSigui
 void construirMensajeRCFTP(struct rcftp_msg* mensaje, int numseq, int datos, int ultimomensaje){
 	mensaje->version = RCFTP_VERSION_1;
     printf("Numero secuencia(dentro): %d \n", mensaje->numseq); //debug
-	mensaje->numseq = numseq;
+    printf("Numero secuencia(htonl): %d \n", htonl((uint32_t)numseq)); //debug
+	mensaje->numseq = htonl((uint32_t)numseq);
 	mensaje->len = htons(datos);
 
 	if (ultimomensaje) {
