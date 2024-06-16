@@ -415,6 +415,7 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
             printf("Longitud leida: %d \n", longitud); //debug
             if (longitud < RCFTP_BUFLEN) {
                 ultimoMensaje = 1; // Marca que este es el último mensaje
+                printf("                     ultimoMensaje = %d", ultimoMensaje); //debug
             }
 
             construirMensajeRCFTP(mensaje, numeroSecuencia, longitud, ultimoMensaje); //mensaje ← construirMensajeRCFTP(datos)
