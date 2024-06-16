@@ -381,7 +381,7 @@ void alg_stopwait(int socket, struct addrinfo *servinfo) {
         addtimeout();
         esperar = 1;
         while (esperar) {
-            numDatosRecibidos = recvfrom(socket,&respuesta,sizeof(respuesta),0,servinfo->ai_addr,&(servinfo->ai_addrlen)); //numDatosRecibidos ← recibir(respuesta)
+            numDatosRecibidos = recvfrom(socket,respuesta,sizeof(struct rcftp_msg),0,servinfo->ai_addr,&(servinfo->ai_addrlen)); //numDatosRecibidos ← recibir(respuesta)
             if (numDatosRecibidos > 0) {
                 canceltimeout();
                 esperar = 0;
