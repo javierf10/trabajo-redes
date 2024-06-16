@@ -412,7 +412,7 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
 
         if ((getfreespace() >= RCFTP_BUFLEN) && !ultimoMensaje) { //if espacioLibreEnVentanaEmision and finDeFicheroNoAlcanzado then
            
-           	for(i = 0; i < RCFTP_BUFLEN; i++){ //borrar buffer
+           	for(int i = 0; i < RCFTP_BUFLEN; i++){ //borrar buffer
 		        mensaje->buffer[i] = 0;
 	        }
             longitud = readtobuffer((char*)mensaje->buffer, RCFTP_BUFLEN); //datos ← leerDeEntradaEstandar()
