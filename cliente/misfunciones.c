@@ -436,7 +436,7 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
             construirMensajeRCFTP(mensajeAnterior, numeroSecuenciaAnterior, longitudAnterior, ultimoMensaje); //mensaje ← construirMensajeMasViejoDeVentanaEmision()
             if (longitudAnterior < RCFTP_BUFLEN && ultimoMensaje) {
                 mensajeAnterior->flags = F_FIN;
-                mensajeAnterior->sum = xsum((char*)mensajeAnterior, sizeof(struct rcftp_msg));
+                mensajeAnterior->sum = xsum((char*)mensajeAnterior, sizeof(*mensajeAnterior));
             }
             sendto(socket, (char *)mensajeAnterior, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, servinfo->ai_addrlen); //enviar(mensaje)
             addtimeout(); //addtimeout()
