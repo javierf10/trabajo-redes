@@ -279,11 +279,9 @@ int esRespuestaEsperadaGBN(struct rcftp_msg* respuesta, int numeroSecuenciaSigui
 /**************************************************************************/
 /* Rellena cada uno de los campos del mensaje (struct rcftp_msg) a enviar */
 /**************************************************************************/
-void construirMensajeRCFTP(struct rcftp_msg* mensaje, int numseq, int datos, int ultimomensaje){
+void construirMensajeRCFTP(struct rcftp_msg* mensaje, ssize_t numseq, ssize_t datos, int ultimomensaje){
 	mensaje->version = RCFTP_VERSION_1;
-    printf("Numero secuencia(dentro): %d \n", mensaje->numseq); //debug
-    printf("Numero secuencia(htonl): %d \n", htonl((uint32_t)numseq)); //debug
-	mensaje->numseq = htonl((uint32_t)numseq);
+	mensaje->numseq = numseq;
 	mensaje->len = htons(datos);
 
 	if (ultimomensaje) {
@@ -295,19 +293,18 @@ void construirMensajeRCFTP(struct rcftp_msg* mensaje, int numseq, int datos, int
 
 	mensaje->next = htonl(0);
 	mensaje->sum = 0;
-	//mensaje->sum = xsum((char*)mensaje,sizeof(*mensaje));
     mensaje->sum = xsum((char*)mensaje,sizeof(*mensaje));
-    printf("Valor (sizeof(struct rcftp_msg): %d\n", sizeof(struct rcftp_msg));
-    printf("Valor sizeof(*mensaje): %d\n", sizeof(*mensaje));
-    printf("Valor checksum(construir): %d\n", mensaje->sum);
-    printf("Valor int issumvalid(struct rcftp_msg *mensaje,int len 488): %d\n", issumvalid(mensaje, 488));
-    printf("Valor int issumvalid((char*)mensaje, sizeof(*mensaje)): %d\n", issumvalid((char*)mensaje, sizeof(*mensaje)));
+
+    //printf("Valor (sizeof(struct rcftp_msg): %d\n", sizeof(struct rcftp_msg));
+    //printf("Valor sizeof(*mensaje): %d\n", sizeof(*mensaje));
+    //printf("Valor checksum(construir): %d\n", mensaje->sum);
+    //printf("Valor int issumvalid(struct rcftp_msg *mensaje,int len 488): %d\n", issumvalid(mensaje, 488));
+    //printf("Valor int issumvalid((char*)mensaje, sizeof(*mensaje)): %d\n", issumvalid((char*)mensaje, sizeof(*mensaje)));
     // int issumvalid(struct rcftp_msg *mensaje,int len) {
 	// if (xsum((char*)mensaje,len)==0)
 	// 	return 1;
 	// else
 	// 	return 0;
-
 
 }
 /**************************************************************************/
@@ -347,7 +344,7 @@ void alg_basico(int socket, struct addrinfo *servinfo) {
 		int recibido = recvfrom(socket, (char*)respuesta, sizeof(*respuesta), 0, servinfo->ai_addr, &(servinfo->ai_addrlen));
         if (recibido == -1) {
             printf("Error al recibir mensaje");} //debug
-        //printf("y este nuevo mas abajo en el bucle?\n"); //debug
+        
 		if (mensajeValido(respuesta) && esLaRespuestaEsperada(mensaje, respuesta)) {
 			if (ultimoMensaje) {
 				ultimoMensajeConfirmado = 1;
@@ -427,7 +424,7 @@ void alg_ventana(int socket, struct addrinfo *servinfo,int window) {
             }
 
             printf("Numero secuencia(antes): %d \n", mensaje->numseq); //debug
-            construirMensajeRCFTP(mensaje, numeroSecuencia, longitud, ultimoMensaje); //mensaje ← construirMensajeRCFTP(datos)
+            construirMensajeRCFTP(mensaje, htonl(numeroSecuencia), longitud, ultimoMensaje); //mensaje ← construirMensajeRCFTP(datos)
             numeroSecuencia += longitud;
             printf("Numero secuencia(despues): %d \n", mensaje->numseq); //debug
             sendto(socket, (char*)mensaje, sizeof(struct rcftp_msg), 0, servinfo->ai_addr, servinfo->ai_addrlen); // enviar(mensaje)
